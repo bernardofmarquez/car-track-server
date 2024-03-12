@@ -2,6 +2,7 @@ import { Driver } from '@prisma/client'
 import { NameAlreadyUsedError } from '../errors/name-already-used-error'
 import { CreateDriverBody } from '../modules/drivers/schemas/create-driver'
 import DriversRepository from '../repositories/drivers-repository'
+import { UpdateDriverBody } from '../modules/drivers/schemas/update-driver'
 
 export default class DriversService {
   constructor(private driversRepository: DriversRepository) {}
@@ -15,24 +16,18 @@ export default class DriversService {
     return createdDriver
   }
 
-  public findAll(): Promise<Driver[]> {
-    return this.driversRepository.findAll()
-  }
-
-  public findManyByName(name: string): Promise<Driver[]> {
-    return this.driversRepository.findManyByName(name)
+  public findMany(name: string | undefined): Promise<Driver[]> {
+    return this.driversRepository.findMany(name)
   }
 
   public findById(id: string): Promise<Driver | null> {
     return this.driversRepository.findById(id)
   }
 
-  public async update(id: string, driverData: CreateDriverBody): Promise<Driver | null> {
-    if (driverData.name) {
-      const existingDriverWithName = await this.driversRepository.findOneByName(driverData.name)
-      if (existingDriverWithName && existingDriverWithName.id !== id) {
-        throw new NameAlreadyUsedError()
-      }
+  public async update(id: string, driverData: UpdateDriverBody): Promise<Driver | null> {
+    const existingDriverWithName = await this.driversRepository.findOneByName(driverData.name)
+    if (existingDriverWithName && existingDriverWithName.id !== id) {
+      throw new NameAlreadyUsedError()
     }
 
     const updatedDriver = await this.driversRepository.update(id, driverData)

@@ -8,17 +8,13 @@ export default class DriversRepository {
     this.prisma = new PrismaClient()
   }
 
-  public async create(driver: CreateDriverBody) {
+  public create(driver: CreateDriverBody) {
     return this.prisma.driver.create({
       data: driver,
     })
   }
 
-  public async findAll() {
-    return this.prisma.driver.findMany()
-  }
-
-  public async findManyByName(name: string): Promise<Driver[]> {
+  public findMany(name: string | undefined): Promise<Driver[]> {
     return this.prisma.driver.findMany({
       where: {
         name: {
@@ -28,26 +24,26 @@ export default class DriversRepository {
     })
   }
 
-  public async findOneByName(name: string) {
+  public findOneByName(name: string) {
     return this.prisma.driver.findUnique({
       where: { name },
     })
   }
 
-  public async findById(id: string) {
+  public findById(id: string) {
     return this.prisma.driver.findUnique({
       where: { id },
     })
   }
 
-  public async update(id: string, driver: Partial<Driver>) {
+  public update(id: string, driver: Partial<Driver>) {
     return this.prisma.driver.update({
       where: { id },
       data: driver,
     })
   }
 
-  public async delete(id: string) {
+  public delete(id: string) {
     return this.prisma.driver.delete({
       where: { id },
     })

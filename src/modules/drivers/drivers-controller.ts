@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { Driver } from '@prisma/client'
+// import { Driver } from '@prisma/client'
 import { NameAlreadyUsedError } from '../../errors'
 import { CreateDriverBody } from './schemas/create-driver'
 import { UpdateDriverBody } from './schemas/update-driver'
@@ -28,13 +28,7 @@ export default class DriversController {
     try {
       const { name } = req.query
 
-      let drivers: Driver[]
-
-      if (name) {
-        drivers = await this.driversService.findManyByName(name)
-      } else {
-        drivers = await this.driversService.findAll()
-      }
+      const drivers = await this.driversService.findMany(name)
 
       return res.status(200).send(drivers)
     } catch (error) {
@@ -47,7 +41,6 @@ export default class DriversController {
       const { id } = req.params
 
       const driver = await this.driversService.findById(id)
-
       if (!driver) {
         return res.status(404).send()
       }

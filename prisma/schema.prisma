@@ -11,3 +11,10 @@ model Driver {
   id      String    @id @default(uuid())
   name    String    @unique
 }
+
+model Car {
+  id      String    @id @default(uuid())
+  licensePlate String @unique
+  color String
+  brand String
+}
