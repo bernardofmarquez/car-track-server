@@ -18,15 +18,15 @@ export default class CarUseService {
     const carUseStartDate = new Date(carUseData.startDate)
     const now = new Date()
 
-    if (carUseStartDate > now) throw FutureStartDate
+    if (carUseStartDate > now) throw new FutureStartDate()
 
-    if (!await this.driversRepository.findById(carUseData.driverId)) throw DriverNotFound
+    if (!await this.driversRepository.findById(carUseData.driverId)) throw new DriverNotFound()
 
-    if (!await this.driversRepository.findById(carUseData.carId)) throw CarNotFound
+    if (!await this.carsRepository.findById(carUseData.carId)) throw new CarNotFound()
 
-    if (await this.carUseRepository.findOngoingCarUseByDriverId(carUseData.driverId)) throw DriverAlreadyUsingCar
+    if (await this.carUseRepository.findOngoingCarUseByDriverId(carUseData.driverId)) throw new DriverAlreadyUsingCar()
 
-    if (await this.carUseRepository.findOngoingCarUseByCarId(carUseData.carId)) throw CarBeingUsed
+    if (await this.carUseRepository.findOngoingCarUseByCarId(carUseData.carId)) throw new CarBeingUsed()
 
     const initiatedCarUse = await this.carUseRepository.create(carUseData)
 
