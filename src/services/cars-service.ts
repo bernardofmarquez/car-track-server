@@ -8,12 +8,12 @@ export default class CarsService {
   constructor(private carsRepository: CarsRepository) {}
 
   public async create(carData: CreateCarBody): Promise<Car> {
-    const existingDriver = await this.carsRepository.findOneByLicensePlate(carData.licensePlate)
-    if (existingDriver) throw new LicensePlateAlreadyRegistered()
+    const existingCar = await this.carsRepository.findOneByLicensePlate(carData.licensePlate)
+    if (existingCar) throw new LicensePlateAlreadyRegistered()
 
-    const createdDriver = await this.carsRepository.create(carData)
+    const createdCar = await this.carsRepository.create(carData)
 
-    return createdDriver
+    return createdCar
   }
 
   public findMany(color: string | undefined, brand: string | undefined): Promise<Car[]> {

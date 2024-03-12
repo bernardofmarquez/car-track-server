@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "CarUse" ALTER COLUMN "endDate" DROP NOT NULL;

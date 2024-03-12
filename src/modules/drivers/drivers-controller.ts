@@ -1,14 +1,22 @@
 import { Request, Response } from 'express'
 // import { Driver } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 import { NameAlreadyUsedError } from '../../errors'
 import { CreateDriverBody } from './schemas/create-driver'
 import { UpdateDriverBody } from './schemas/update-driver'
 import DriversService from '../../services/drivers-service'
+import CarUseService from '../../services/car-use-service'
+import { db } from '../../config/db'
 
 export default class DriversController {
+  private db: PrismaClient
+
   constructor(
     private driversService: DriversService,
-  ) {}
+    private carUseService: CarUseService,
+  ) {
+    this.db = db
+  }
 
   public async create(req: Request<{}, {}, CreateDriverBody>, res: Response): Promise<Response> {
     try {
@@ -79,9 +87,12 @@ export default class DriversController {
         return res.status(404).send()
       }
 
-      const deletedDriver = await this.driversService.delete(id)
+      await db.$transaction([
+        this.carUseService.deleteManyByDriverId(id),
+        this.driversService.delete(id),
+      ])
 
-      return res.status(200).send(deletedDriver)
+      return res.status(200).send()
     } catch (error) {
       return res.status(500).send(error)
     }

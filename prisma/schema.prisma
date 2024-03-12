@@ -8,13 +8,26 @@ datasource db {
 }
 
 model Driver {
-  id      String    @id @default(uuid())
-  name    String    @unique
+  id String @id @default(uuid())
+  name String @unique
+  carUse CarUse[]
 }
 
 model Car {
-  id      String    @id @default(uuid())
+  id String @id @default(uuid())
   licensePlate String @unique
   color String
   brand String
+  carUse CarUse[]
+}
+
+model CarUse {
+  id String @id @default(uuid())
+  driver Driver @relation(fields: [driverId], references: [id])
+  driverId String
+  car Car @relation(fields: [carId], references: [id])
+  carId String
+  usageReason String
+  startDate DateTime
+  endDate DateTime?
 }

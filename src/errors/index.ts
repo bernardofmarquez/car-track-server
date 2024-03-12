@@ -1,2 +1,7 @@
 export * from './name-already-used-error'
 export * from './license-plate-already-registered'
+export * from './driver-not-found'
+export * from './car-not-found'
+export * from './driver-already-using-car'
+export * from './car-being-used'
+export * from './future-start-date'

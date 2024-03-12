@@ -17,7 +17,7 @@ export default class DriversService {
   }
 
   public findMany(name: string | undefined): Promise<Driver[]> {
-    return this.driversRepository.findMany(name)
+    return this.driversRepository.findManyByName(name)
   }
 
   public findById(id: string): Promise<Driver | null> {

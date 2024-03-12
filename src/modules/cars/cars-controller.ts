@@ -1,13 +1,21 @@
 import { Request, Response } from 'express'
+import { PrismaClient } from '@prisma/client'
 import { LicensePlateAlreadyRegistered } from '../../errors'
 import { CreateCarBody } from './schemas/create-car'
 import CarsService from '../../services/cars-service'
 import { UpdateCarBody } from './schemas/update-car'
+import { db } from '../../config/db'
+import CarUseService from '../../services/car-use-service'
 
 export default class CarsController {
+  private db: PrismaClient
+
   constructor(
     private carsService: CarsService,
-  ) {}
+    private carUseService: CarUseService,
+  ) {
+    this.db = db
+  }
 
   public async create(req: Request<{}, {}, CreateCarBody>, res: Response): Promise<Response> {
     try {
@@ -77,10 +85,12 @@ export default class CarsController {
       if (!await this.carsService.findById(id)) {
         return res.status(404).send()
       }
+      await db.$transaction([
+        this.carUseService.deleteManyByCarId(id),
+        this.carsService.delete(id),
+      ])
 
-      const deletedCar = await this.carsService.delete(id)
-
-      return res.status(200).send(deletedCar)
+      return res.status(200).send()
     } catch (error) {
       return res.status(500).send(error)
     }

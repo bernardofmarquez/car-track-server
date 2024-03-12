@@ -5,12 +5,18 @@ import DriversController from '../modules/drivers/drivers-controller'
 import { createDriverJsonSchema } from '../modules/drivers/schemas/create-driver'
 import validateSchema from '../middlewares/validate-schema'
 import { updateDriverJsonSchema } from '../modules/drivers/schemas/update-driver'
+import CarUseRepository from '../repositories/car-use-repository'
+import CarUseService from '../services/car-use-service'
+import CarsRepository from '../repositories/cars-repository'
 
 const driversRouter = Router()
 
 const driversRepository = new DriversRepository()
+const carUseRepository = new CarUseRepository()
+const carsRepository = new CarsRepository()
 const driversService = new DriversService(driversRepository)
-const driversController = new DriversController(driversService)
+const carUseService = new CarUseService(carUseRepository, driversRepository, carsRepository)
+const driversController = new DriversController(driversService, carUseService)
 
 driversRouter.post(
   '/v1/drivers',
