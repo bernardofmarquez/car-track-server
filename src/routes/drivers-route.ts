@@ -1,4 +1,4 @@
-import { Router } from 'express'
+import { Request, Response, Router } from 'express'
 import DriversRepository from '../repositories/drivers-repository'
 import DriversService from '../services/drivers-service'
 import DriversController from '../modules/drivers/drivers-controller'
@@ -12,9 +12,30 @@ const driversRepository = new DriversRepository()
 const driversService = new DriversService(driversRepository)
 const driversController = new DriversController(driversService)
 
-driversRouter.post('/v1/drivers', validateSchema(createDriverJsonSchema), driversController.create)
-driversRouter.get('/v1/drivers', driversController.findMany)
-driversRouter.put('/v1/drivers/:id', validateSchema(updateDriverJsonSchema), driversController.update)
-driversRouter.delete('/v1/drivers/:id', driversController.delete)
+driversRouter.post(
+  '/v1/drivers',
+  validateSchema(createDriverJsonSchema),
+  (req: Request, res: Response) => driversController.create(req, res),
+)
+
+driversRouter.get(
+  '/v1/drivers',
+  (req: Request, res: Response) => driversController.findMany(req, res),
+)
+
+driversRouter.get(
+  '/v1/drivers/:id',
+  (req: Request<{ id: string }>, res: Response) => driversController.findById(req, res),
+)
+
+driversRouter.put(
+  '/v1/drivers/:id',
+  validateSchema(updateDriverJsonSchema),
+  (req: Request<{ id: string }>, res: Response) => driversController.update(req, res),
+)
+driversRouter.delete(
+  '/v1/drivers/:id',
+  (req: Request<{ id: string }>, res: Response) => driversController.delete(req, res),
+)
 
 export default driversRouter

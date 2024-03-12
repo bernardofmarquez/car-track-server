@@ -20,7 +20,11 @@ export default class DriversRepository {
 
   public async findManyByName(name: string): Promise<Driver[]> {
     return this.prisma.driver.findMany({
-      where: { name },
+      where: {
+        name: {
+          contains: name,
+        },
+      },
     })
   }
 

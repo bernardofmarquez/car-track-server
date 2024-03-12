@@ -1,9 +1,9 @@
 import { Request, Response } from 'express'
 import { Driver } from '@prisma/client'
-import DriversService from '../../services/drivers-service'
 import { NameAlreadyUsedError } from '../../errors'
 import { CreateDriverBody } from './schemas/create-driver'
 import { UpdateDriverBody } from './schemas/update-driver'
+import DriversService from '../../services/drivers-service'
 
 export default class DriversController {
   constructor(
@@ -18,9 +18,8 @@ export default class DriversController {
       return res.status(201).send(createdDriver)
     } catch (error) {
       if (error instanceof NameAlreadyUsedError) {
-        return res.status(400).send(error)
+        return res.status(400).send({ message: error.message })
       }
-      console.log(error)
       return res.status(500).send(error)
     }
   }
@@ -38,6 +37,22 @@ export default class DriversController {
       }
 
       return res.status(200).send(drivers)
+    } catch (error) {
+      return res.status(500).send(error)
+    }
+  }
+
+  public async findById(req: Request<{ id: string }>, res: Response): Promise<Response> {
+    try {
+      const { id } = req.params
+
+      const driver = await this.driversService.findById(id)
+
+      if (!driver) {
+        return res.status(404).send()
+      }
+
+      return res.status(200).send(driver)
     } catch (error) {
       return res.status(500).send(error)
     }
